@@ -11,6 +11,15 @@ def not_valid_number?(num)
   end
 end
 
+def operation_to_message(op)
+  case op
+  when '1' then "Adding"
+  when '2' then "Subtracting"
+  when '3' then "Multiplying"
+  when '4' then "Dividing"
+  end
+end
+
 # main loop
 
 loop do
@@ -42,9 +51,17 @@ num2 = num2.to_i
 
 
 #loop if not 1 to 4
+operator_prompt = <<-MSG
+What operation do you want to perform?
+1) add
+2) subtract
+3) multiply
+4) divide?
+
+MSG
 operation = ''
 loop do
-  prompt("What operation to perform on both numbers? 1) add, 2) subtract, 3) multiply, 4) divide")
+  prompt(operator_prompt)
   operation = Kernel.gets().chomp()
   operation_set = ["1","2","3","4"]
   if operation_set.include?(operation) != true
@@ -61,10 +78,11 @@ result = case operation
          when "3" then  result = num1 * num2
          when "4" then  result = num1.to_f / num2.to_f
          end
+prompt("#{operation_to_message(operation)} your numbers...")
 prompt("Your result is #{result}")
 
 prompt("Would you want to do another calculation? (Y for another one)")
-recalc = Kernel.gets().chomp()
+recalc = Kernel.gets.chomp
 if recalc.downcase != 'y'
   prompt("Thank you. Hope you liked your calculation. Goodbye!")
   break
