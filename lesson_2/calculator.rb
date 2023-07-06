@@ -1,3 +1,6 @@
+require 'yaml'
+MESSAGES = YAML.load_file('calculator_messages.yml')
+
 def prompt(message)
   Kernel.puts("=> #{message}")
 end
@@ -8,10 +11,6 @@ def not_valid_number?(num)
   else
     false
   end
-end
-
-def number?(num)
-
 end
 
 def operation_to_message(op)
@@ -29,10 +28,10 @@ loop do
 # loop if not a number
 num1 = ''
 loop do
-  prompt("What is your first number?")
+  prompt(MESSAGES['first_number'])
   num1 = Kernel.gets().chomp()
   if not_valid_number?(num1)
-    prompt("This isn't a number: please key in a number!")
+    prompt(MESSAGES['invalid_number'])
   else
     break
   end
@@ -42,10 +41,10 @@ num1 = num1.to_i
 # loop if not a number
 num2 = ''
 loop do
-  prompt("What is your second number?")
+  prompt(MESSAGES['second_number'])
   num2 = Kernel.gets().chomp()
   if not_valid_number?(num2)
-    prompt("This isn't a number: please key in a number!")
+    prompt(MESSAGES['invalid_number'])
   else
     break
   end
@@ -67,7 +66,7 @@ loop do
   operation = Kernel.gets().chomp()
   operation_set = ["1", "2", "3", "4" ]
   if operation_set.include?(operation) != true
-    prompt("You must key in numbers 1 to 4")
+    prompt(MESSAGES['invalid_operation'])
   else
     break
   end
@@ -83,10 +82,10 @@ result = case operation
 prompt("#{operation_to_message(operation)} your numbers...")
 prompt("Your result is #{result}")
 
-prompt("Would you want to do another calculation? (Y for another one)")
+prompt(MESSAGES['calculate_again'])
 recalc = Kernel.gets.chomp
 if recalc.downcase != 'y'
-  prompt("Thank you. Hope you liked your calculation. Goodbye!")
+  prompt(MESSAGES['farewell'])
   break
 end
 end

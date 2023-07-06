@@ -1,5 +1,13 @@
+require 'pry'
+require 'yaml'
+MESSAGES = YAML.load_file('loan_calculator_messages.yml')
+
 def prompt(message)
   Kernel.puts("=> #{message}")
+end
+
+def clear_system
+  Kernel.system("clear")
 end
 
 def not_valid_amount?(num)
@@ -10,8 +18,8 @@ def not_valid_rate?(rate)
   true if rate.to_f() == 0 || (rate.zero? || rate.to_f() < 0)
 end
 
-def get_monthly_rate(apr)
-  apr / 12
+def get_monthly_rate(annual_rate)
+  annual_rate.to_f / 12
 end
 
 def get_monthly_duration(duration)
@@ -24,13 +32,14 @@ end
 
 # main loop
 loop do
-  prompt("Welcome to the loan calculator!")
+  clear_system
+  prompt(MESSAGES['welcome'])
   loan_amount = ''
   loop do
-    prompt("What is your loan amount in US$?")
+    prompt(MESSAGES['loan_amount'])
     loan_amount = gets.chomp.to_i
     if not_valid_amount?(loan_amount)
-      prompt("Sorry, we can't process that.\nPlease key in a number larger than 0!")
+      prompt(MESSAGES['invalid_loan_amount'])
     else
       break
     end
@@ -38,10 +47,10 @@ loop do
 
   apr = ''
   loop do
-    prompt("What is the annual percentage rate (APR)? \nKey in the percentage e.g. 5%, not 0.05")
+    prompt(MESSAGES['annual_rate'])
     apr = gets.chomp.to_f / 100
     if not_valid_rate?(apr)
-      prompt("That is not a valid annual loan rate. \nPlease key in a number larger than 0.0%.")
+      prompt(MESSAGES['invalid_rate'])
     else
       break
     end
@@ -49,29 +58,31 @@ loop do
 
   loan_duration = ''
   loop do
-    prompt("What is your loan duration in years? Round to the nearest full year.")
+    prompt(MESSAGES['loan_duration'])
     loan_duration = gets.chomp.to_i
     if not_valid_amount?(loan_duration)
-      prompt("Please key in the number of full years of the loan")
+      prompt(MESSAGES['invalid_duration'])
     else
       break
     end
   end
 
-  prompt("Calculating your monthly payment...")
+  prompt(MESSAGES['buying_time'])
 
-  get_monthly_rate(apr)
+  calculated_rate = get_monthly_rate(apr)
 
-  get_monthly_duration(loan_duration)
+  calculated_duration = get_monthly_duration(loan_duration)
 
-  get_monthly_payment(loan_amount, get_monthly_rate, get_monthly_duration)
+  calc_monthly_payment = get_monthly_payment(loan_amount, calculated_rate, calculated_duration)
 
-  prompt("Your monthly payment is $#{get_monthly_payment.truncate(2)}!")
+  prompt("Your monthly payment is $#{calc_monthly_payment.truncate(2)}!")
 
-  prompt("Would you like to calculate another loan? Press 'Y' to do so.")
+  prompt(MESSAGES['calculate_again'])
   recalc = gets.chomp
+  clear_system
+
   if recalc.downcase != 'y'
-    prompt("Thank you for using the loan calculator. Goodbye & good luck paying it off! :)")
+    prompt(MESSAGES['farewell'])
     break
   end
 end
