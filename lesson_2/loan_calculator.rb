@@ -23,12 +23,14 @@ def get_monthly_rate(annual_rate)
 end
 
 def get_monthly_duration(duration)
-  duration * 12
+  duration.to_f * 12
 end
 
 def get_monthly_payment(loan_amount, monthly_rate, monthly_loan_duration)
   loan_amount * (monthly_rate / (1 - ((1 + monthly_rate)**(-monthly_loan_duration))))
 end
+
+
 
 # main loop
 loop do
@@ -59,8 +61,8 @@ loop do
   loan_duration = ''
   loop do
     prompt(MESSAGES['loan_duration'])
-    loan_duration = gets.chomp.to_i
-    if not_valid_amount?(loan_duration)
+    loan_duration = gets.chomp.to_f
+    if not_valid_rate?(loan_duration)
       prompt(MESSAGES['invalid_duration'])
     else
       break
@@ -73,9 +75,20 @@ loop do
 
   calculated_duration = get_monthly_duration(loan_duration)
 
-  calc_monthly_payment = get_monthly_payment(loan_amount, calculated_rate, calculated_duration)
+  calc_monthly_payment = get_monthly_payment(loan_amount,
+                                             calculated_rate,
+                                             calculated_duration)
 
-  prompt("Your monthly payment is $#{calc_monthly_payment.truncate(2)}!")
+  summary_msg = <<-MSG
+  Here's a summary of your calculation!
+
+  Your monthly payment is US$#{calc_monthly_payment.truncate(2)},
+  for the loan amount of US$#{loan_amount},
+  with an annual percentage rate of #{(apr * 100).truncate(2)}%,
+  for #{loan_duration} years.
+  MSG
+
+  prompt(summary_msg)
 
   prompt(MESSAGES['calculate_again'])
   recalc = gets.chomp
