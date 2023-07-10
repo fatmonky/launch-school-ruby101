@@ -30,12 +30,7 @@ def get_monthly_payment(loan_amount, monthly_rate, monthly_loan_duration)
   loan_amount * (monthly_rate / (1 - ((1 + monthly_rate)**(-monthly_loan_duration))))
 end
 
-
-
-# main loop
-loop do
-  clear_system
-  prompt(MESSAGES['welcome'])
+def prompt_loan_amount
   loan_amount = ''
   loop do
     prompt(MESSAGES['loan_amount'])
@@ -46,7 +41,10 @@ loop do
       break
     end
   end
+  loan_amount
+end
 
+def prompt_annual_rate
   apr = ''
   loop do
     prompt(MESSAGES['annual_rate'])
@@ -57,7 +55,10 @@ loop do
       break
     end
   end
+  apr
+end
 
+def prompt_loan_duration
   loan_duration = ''
   loop do
     prompt(MESSAGES['loan_duration'])
@@ -68,6 +69,18 @@ loop do
       break
     end
   end
+  loan_duration
+end
+
+# main loop
+loop do
+  clear_system
+  prompt(MESSAGES['welcome'])
+  loan_sum = prompt_loan_amount
+
+  apr = prompt_annual_rate
+
+  loan_duration = prompt_loan_duration
 
   prompt(MESSAGES['buying_time'])
 
@@ -75,7 +88,7 @@ loop do
 
   calculated_duration = get_monthly_duration(loan_duration)
 
-  calc_monthly_payment = get_monthly_payment(loan_amount,
+  calc_monthly_payment = get_monthly_payment(loan_sum,
                                              calculated_rate,
                                              calculated_duration)
 
@@ -83,7 +96,7 @@ loop do
   Here's a summary of your calculation!
 
   Your monthly payment is US$#{calc_monthly_payment.truncate(2)},
-  for the loan amount of US$#{loan_amount},
+  for the loan amount of US$#{loan_sum},
   with an annual percentage rate of #{(apr * 100).truncate(2)}%,
   for #{loan_duration} years.
   MSG
