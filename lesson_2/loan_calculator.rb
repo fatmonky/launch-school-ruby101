@@ -27,7 +27,8 @@ def get_monthly_duration(duration)
 end
 
 def get_monthly_payment(loan_amount, monthly_rate, monthly_loan_duration)
-  loan_amount * (monthly_rate / (1 - ((1 + monthly_rate)**(-monthly_loan_duration))))
+  loan_amount * (monthly_rate /
+                 (1 - ((1 + monthly_rate)**(-monthly_loan_duration))))
 end
 
 def prompt_loan_amount
@@ -72,6 +73,17 @@ def prompt_loan_duration
   loan_duration
 end
 
+def prompt_play_again?
+  prompt(MESSAGES['calculate_again'])
+  recalc = gets.chomp
+  clear_system
+
+  if recalc.downcase != 'y'
+    prompt(MESSAGES['farewell'])
+    break
+  end
+end
+
 # main loop
 loop do
   clear_system
@@ -102,13 +114,5 @@ loop do
   MSG
 
   prompt(summary_msg)
-
-  prompt(MESSAGES['calculate_again'])
-  recalc = gets.chomp
-  clear_system
-
-  if recalc.downcase != 'y'
-    prompt(MESSAGES['farewell'])
-    break
-  end
+  break unless prompt_play_again?
 end
