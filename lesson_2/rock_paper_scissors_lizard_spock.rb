@@ -26,7 +26,7 @@ WINNING_MOVES = {
 }
 
 CHOICE_MESSAGE = <<-MSG
-Choose one option:
+Choose one option: you may type out the option or its shortcut!
 -rock (or "r")
 -paper (or "p")
 -scissors (or "sc")
@@ -53,6 +53,14 @@ def display_results(player, computer)
   end
 end
 
+def calculate_results(player, computer)
+  if win?(WINNING_MOVES, player, computer)
+    "You won."
+  elsif win?(WINNING_MOVES, computer, player)
+    "Computer Won!"
+  end
+end
+
 def player_choice
   choice = ''
   loop do
@@ -71,6 +79,9 @@ def player_choice
   choice
 end
 
+current_player_score = 0
+current_computer_score = 0
+
 loop do
   choice = player_choice
 
@@ -80,10 +91,24 @@ loop do
 
   display_results(choice, computer_choice)
 
+  if calculate_results(choice, computer_choice) == "You won."
+    current_player_score += 1
+  elsif calculate_results(choice, computer_choice) == "Computer Won!"
+    current_computer_score += 1
+  end
+
+  prompt("Your current score:#{current_player_score}")
+  prompt("Computer's current score: #{current_computer_score}.")
+
+  break if (current_computer_score == 3) || (current_player_score == 3)
+
   prompt("Play again? (Y to play again)")
   play_again = Kernel.gets().chomp()
   break unless play_again.downcase == 'y'
 end
 
 Kernel.system('clear')
+prompt("Your Final Score: #{current_player_score}")
+prompt("Computer's Final Score: #{current_computer_score}")
 prompt("Thank you for playing rock, paper, scissors, lizard, spock!")
+prompt("Live Long and Prosper!")
